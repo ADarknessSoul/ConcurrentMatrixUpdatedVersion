@@ -1,5 +1,7 @@
 package Logic;
 
+import javax.swing.JLabel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,60 +17,74 @@ public final class Matrix implements Runnable{
     int[][] Matrix1a;
     int[][] Matrix2a;
     int[][] auxMatrix;
-    long time1;
-    long time1M;
-    long time2;
-    long time2M;
-    int rows;
-    int cols;
+    
+    int[][] MatrizNueva;
+    int rowsA;
+    int colsA;
+    int rowsB;
+    int colsB;
     int startIndex;
     int endIndex;
-    MainMatrix mainm;
+    JLabel labelConcurrente;
+    Initialize process;
     
-    public Matrix(int rows, int cols, int[][] Matrix1a, int[][] Matrix2a, int startIndex, int endIndex, MainMatrix mainm) {
+    public Matrix(int rowsA, int colsA, int rowsB, int colsB, int[][] Matrix1Concurrent, int[][] Matrix2a, int startIndex, int endIndex, JLabel labelConcurrente, Initialize process) {
         
-        this.rows = rows;
-        this.cols = cols;
-        this.Matrix1a = Matrix1a;
+        this.rowsA = rowsA;
+        this.colsA = colsA;
+        this.rowsB = rowsB;
+        this.colsB = colsB;
+        
+        this.Matrix1a = new int[Matrix1Concurrent.length][Matrix1Concurrent[0].length];
+        this.Matrix2a = new int[rowsB][colsB];
+        
+        this.Matrix1a = Matrix1Concurrent;
         this.Matrix2a = Matrix2a;
-        this.auxMatrix = new int[Matrix1a.length][cols];
+        
+        this.MatrizNueva = new int[Matrix1Concurrent.length][Matrix1Concurrent[0].length];
+        
+        for(int i = 0; i < Matrix1Concurrent.length; i++) {
+            
+            for(int j = 0; j < Matrix1Concurrent[i].length; j++) {
+                
+                MatrizNueva[i][j] = Matrix1Concurrent[i][j];
+                
+            }
+            
+        }
+        
+        this.auxMatrix = new int[rowsA][colsB];
         this.startIndex = startIndex;
         this.endIndex = endIndex;
-        this.mainm = mainm;
-//        initializeMatrix();
+        this.labelConcurrente = labelConcurrente;
+        this.process = process;
         
     }
     
     @Override
     public void run() {
+
+        final long time1M = System.currentTimeMillis();
                 
-                time1 = System.nanoTime(); 
-                time1M = System.currentTimeMillis();
-        
-//                printMatrixes();
-                
-                for(int i = 0; i < Matrix1a.length; i++) {
+        for(int i = 0; i < MatrizNueva.length; i++) {
                     
-                    for(int j = 0; j < cols; j++) {
+            for(int j = 0; j < colsB; j++) {
                         
-                        auxMatrix[i][j] = multiplyMatrix(i, j);
-//                        System.out.println("Valor de la matriz final en posición " + j + " : " + auxMatrix[i][j]);
+                auxMatrix[i][j] = multiplyMatrix(i, j);
+//                       
                         
-                    }                       
+            }                       
                         
-                }
-                
-                mainm.joinArray(auxMatrix, startIndex, endIndex, cols);
-                
+        }
+               
+        final long time2M = System.currentTimeMillis();
 
-                time2 = System.nanoTime();
-                time2M = System.currentTimeMillis();
-
-                time1 = time2 - time1;
-                time1M = time2M - time1M;
-
-//                System.out.println("Thread: " + Thread.currentThread().getName() + ", time: " + time1 + "ns");
-                System.out.println("Thread: " + Thread.currentThread().getName() + ", time: " + time1M + "ms");
+        final long timeResult = time2M - time1M;
+        
+        process.joinArray(auxMatrix, startIndex, endIndex, auxMatrix[0].length);
+        
+        labelConcurrente.setText("Tiempo: " + Integer.toString((int) timeResult) + "ms");
+        //System.out.println("Thread: " + Thread.currentThread().getName() + ", FirstValue: " + Matrix1a[0][0] + ", FirstResult: " + auxMatrix[0][0]);
        
     }
 
@@ -78,32 +94,15 @@ public final class Matrix implements Runnable{
         int res = 0;
         int aux = 0;
         
-        while(aux < cols){
+        while(aux < colsA){
             
-            res = res + (Matrix1a[i][aux] * Matrix2a[aux][j]);
+            res = res + (MatrizNueva[i][aux] * Matrix2a[aux][j]);
             aux++;
             
         }
         
         return res;
         
-    }
-    
-    public void printMatrixes() {
-        
-        System.out.println("Thread: " + Thread.currentThread().getName() + ", length: " + Matrix1a.length);
-        
-//        for(int i = 0; i < Matrix1a.length; i++) {
-//            
-//            for(int j = 0; j < cols; j++) {
-//                
-////                System.out.println("Thread: " + Thread.currentThread().getName() + " ,value: " + Matrix1a[i][j] + ", pos i: " + i + ", pos j: " + j + "\n");           
-//                
-//            }       
-//            
-//        }
-        
-    }
-    
+    } 
 
 }

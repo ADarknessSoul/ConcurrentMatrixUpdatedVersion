@@ -2,6 +2,9 @@ package visual;
 
 import java.awt.Color;
 import Logic.Initialize;
+import Logic.Initialize;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextArea;
 /**
  *
@@ -13,6 +16,10 @@ public class VisualArrays extends javax.swing.JFrame {
     int[][] matrixA;
     int[][] matrixB;
     int numHilos;
+    int rowsA;
+    int colsA;
+    int rowsB;
+    int colsB;
     
     public VisualArrays() {
         initComponents();
@@ -167,14 +174,12 @@ public class VisualArrays extends javax.swing.JFrame {
 
         txtAreaMatrizA.setColumns(20);
         txtAreaMatrizA.setRows(5);
-        txtAreaMatrizA.setEnabled(false);
         scrollPanelMatrizA.setViewportView(txtAreaMatrizA);
 
         jPanelMultiplicacionMatrices.add(scrollPanelMatrizA, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 130, 130, 80));
 
         txtAreaMatrizB.setColumns(20);
         txtAreaMatrizB.setRows(5);
-        txtAreaMatrizB.setEnabled(false);
         scrollPanelMatrizB.setViewportView(txtAreaMatrizB);
 
         jPanelMultiplicacionMatrices.add(scrollPanelMatrizB, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 130, 140, 80));
@@ -296,8 +301,13 @@ public class VisualArrays extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
        
-        
-        
+        Initialize process = new Initialize(); 
+        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblTiempoEjecucionSecuencial);
+        try {
+            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblTiempoEjecucionConcurrente, numHilos);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     private void btnCrearMatricesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearMatricesActionPerformed
@@ -325,10 +335,10 @@ public class VisualArrays extends javax.swing.JFrame {
             
             Initialize mainM = new Initialize();
             
-            int rowsA = Integer.parseInt(this.txtFilasA.getText());
-            int colsA = Integer.parseInt(this.txtColumnasA.getText());
-            int rowsB = Integer.parseInt(this.txtFilasB.getText());
-            int colsB = Integer.parseInt(this.txtColumnasB.getText());
+            rowsA = Integer.parseInt(this.txtFilasA.getText());
+            colsA = Integer.parseInt(this.txtColumnasA.getText());
+            rowsB = Integer.parseInt(this.txtFilasB.getText());
+            colsB = Integer.parseInt(this.txtColumnasB.getText());
             
             matrixA = new int[rowsA][colsA];
             matrixB = new int[rowsB][colsB];
@@ -389,18 +399,23 @@ public class VisualArrays extends javax.swing.JFrame {
     
     public void printArrays(JTextArea panel, int[][] matriz) {
         
+        int length;
+        
+        if(matriz.length >= 50) length = 50;
+        else length = matriz.length;
+        
         panel.setText("");
         
-        for (int[] matriz1 : matriz) {
+        for (int i = 0; i < length; i++) {
             
-            for (int j = 0; j < matriz1.length; j++) {
+            for (int j = 0; j < matriz[i].length; j++) {
                 
                 //Se escribe el valor actual de la matriz en el txtArea, dependiendo de su número de digitos se le da más espacios
                 String textInPanel = panel.getText();
-                switch (Integer.toString(matriz1[j]).length()) {
-                    case 1 -> panel.setText(textInPanel + Integer.toString(matriz1[j]) + "    ");
-                    case 2 -> panel.setText(textInPanel + Integer.toString(matriz1[j]) + "   ");
-                    case 3 -> panel.setText(textInPanel + Integer.toString(matriz1[j]) + " ");
+                switch (Integer.toString(matriz[i][j]).length()) {
+                    case 1 -> panel.setText(textInPanel + Integer.toString(matriz[i][j]) + "    ");
+                    case 2 -> panel.setText(textInPanel + Integer.toString(matriz[i][j]) + "   ");
+                    case 3 -> panel.setText(textInPanel + Integer.toString(matriz[i][j]) + " ");
                 }
                 
             }

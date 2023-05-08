@@ -1,5 +1,7 @@
 package Logic;
 
+import javax.swing.JLabel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,10 +19,11 @@ public final class SerialMatrix {
     int[][] auxMatrix;
     long time1;
     long time2;
-    long time1M;
-    long time2M;
-    int rows;
-    int cols;
+    int rowsA;
+    int colsA;
+    int rowsB;
+    int colsB;
+    JLabel labelSecuencial;
     
     public SerialMatrix() {
         
@@ -28,22 +31,29 @@ public final class SerialMatrix {
         
     }
     
-    public SerialMatrix(int rows, int cols) {
+    public SerialMatrix(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizSecuencial, int[][] MatrizConcurrente, JLabel labelSecuencial) {
         
-        this.rows = rows;
-        this.cols = cols;
-        initializeMatrix();
+        this.rowsA = rowsA;
+        this.colsA = colsA;
+        this.rowsB = rowsB;
+        this.colsB = colsB;
+        
+        Matrix1 = MatrizSecuencial;
+        Matrix2 = MatrizConcurrente;
+        auxMatrix = new int[rowsA][colsB];
+        
+        this.labelSecuencial = labelSecuencial;
         
     }
     
     public int[][] CalculateMatrix() {
         
-        time1 = System.nanoTime(); 
-        time1M = System.currentTimeMillis();
+        //time1 = System.nanoTime(); 
+        final long time1M = System.currentTimeMillis();
         
-        for(int i = 0; i < rows; i++) {
+        for(int i = 0; i < rowsA; i++) {
             
-            for(int j = 0; j < cols; j++) {
+            for(int j = 0; j < colsB; j++) {
                 
 //                auxMatrix[i][j] = Matrix1[i][0] * Matrix2[0][j] + Matrix1[i][1] * Matrix2[1][j] + Matrix1[i][2] * Matrix2[2][j] + Matrix1[i][3] * Matrix2[3][j]; 
                   auxMatrix[i][j] = multiplyMatrix(i, j);
@@ -52,40 +62,18 @@ public final class SerialMatrix {
             
         }
         
-        time2 = System.nanoTime();
-        time2M = System.currentTimeMillis();
+        //time2 = System.nanoTime();
+        final long time2M = System.currentTimeMillis();
         
-        time1 = time2 - time1;
-        time1M = time2M - time1M;
+        //time1 = time2 - time1;
+        final long resultTime = time2M - time1M;
 
 //        System.out.println("El tiempo de ejecución fue: " + time1);
-        System.out.println("El tiempo de ejecución del secuencial fue: " + time1M + "ms");
+        //System.out.println("El tiempo de ejecución del secuencial fue: " + time1M + "ms");
+        
+        this.labelSecuencial.setText("Tiempo: " + Integer.toString((int) resultTime) + "ms");
         
         return auxMatrix;
-        
-    }
-    
-    public void initializeMatrix(){
-               
-        Matrix1 = new int[rows][cols];
-        Matrix2 = new int[rows][cols];
-        auxMatrix = new int[rows][cols];
-//        int offset = 0;
-        
-        for(int i = 0; i < rows; i++) {
-            
-            for(int j = 0; j < cols; j++) {
-                
-                Matrix1[i][j] = (j + 1);
-                Matrix2[i][j] = (j + 1);
-//                System.out.println("Valor de matriz1 en posición: " + i + " " + j + " : " + Matrix1[i][j]);
-//                System.out.println("Valor de matriz2 en posición: " + i + " " + j + " : " + Matrix2[i][j]);
-                
-//                if(j + 1 == cols) offset = offset + (j + 1);
-                
-            }
-            
-        }
         
     }
     
@@ -94,7 +82,7 @@ public final class SerialMatrix {
         int res = 0;
         int aux = 0;
         
-        while(aux < rows){
+        while(aux < colsA){
             
             res = res + (Matrix1[i][aux] * Matrix2[aux][j]);
             aux++;
