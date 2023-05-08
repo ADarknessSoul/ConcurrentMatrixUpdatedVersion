@@ -1,3 +1,5 @@
+package Logic;
+
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -29,8 +31,8 @@ public class MainMatrix {
     
     public static void main(String[] args) throws InterruptedException {
         
-        MainMatrix mn = new MainMatrix();
-        mn.ConcurrentMatrix();
+//        MainMatrix mn = new MainMatrix();
+//        mn.ConcurrentMatrix();
         
     }
     
@@ -42,24 +44,24 @@ public class MainMatrix {
     
     public void ConcurrentMatrix() throws InterruptedException {
         
-        batchSize = 8;
-        
-        Scanner entrada = new Scanner(System.in);
-        
-        System.out.println("Ingresa el número de filas: ");
-        rows = entrada.nextInt();
-        
-        System.out.println("Ingresa el número de columnas: ");
-        cols = entrada.nextInt();
-        
-        if(rows <= batchSize) threads = new Thread[rows];
-        else threads = new Thread[batchSize];
-        
-        initializeMatrix();
-        
-        Matriz = new int[rows][cols];
-        
-        initializeThreads();
+//        batchSize = 8;
+//        
+//        Scanner entrada = new Scanner(System.in);
+//        
+//        System.out.println("Ingresa el número de filas: ");
+//        rows = entrada.nextInt();
+//        
+//        System.out.println("Ingresa el número de columnas: ");
+//        cols = entrada.nextInt();
+//        
+//        if(rows <= batchSize) threads = new Thread[rows];
+//        else threads = new Thread[batchSize];
+//        
+//        initializeMatrix();
+//        
+//        Matriz = new int[rows][cols];
+//        
+//        initializeThreads();
 ////        
 //        for(int i = 0; i < threads.length; i++) {
 //            
@@ -69,10 +71,10 @@ public class MainMatrix {
         
 
 //////        
-        SerialMatrix sM = new SerialMatrix(rows, cols);
-//        
-        Matriz = sM.CalculateMatrix();
-//        
+//        SerialMatrix sM = new SerialMatrix(rows, cols);
+////        
+//        Matriz = sM.CalculateMatrix();
+////        
 //        for(int i = 0; i < rows; i++) {
 //            
 //            for(int j = 0; j < cols; j++) {
@@ -86,7 +88,7 @@ public class MainMatrix {
         
     }
     
-        public void initializeMatrix(){
+        public void initializeMatrix(int newRows, int newCols){
                
         Matrix1 = new int[rows][cols];
         Matrix2 = new int[rows][cols];
