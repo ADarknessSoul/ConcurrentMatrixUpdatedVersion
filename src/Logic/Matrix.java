@@ -1,6 +1,9 @@
 package Logic;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -26,20 +29,20 @@ public final class Matrix implements Runnable{
     int startIndex;
     int endIndex;
     JLabel labelConcurrente;
+    JTextArea panelHilos;
     Initialize process;
     
-    public Matrix(int rowsA, int colsA, int rowsB, int colsB, int[][] Matrix1Concurrent, int[][] Matrix2a, int startIndex, int endIndex, JLabel labelConcurrente, Initialize process) {
+    public Matrix(int rowsA, int colsA, int rowsB, int colsB, int[][] Matrix1Concurrent, int[][] Matrix2a, int startIndex, int endIndex, JLabel labelConcurrente, Initialize process, JTextArea panelHilos) {
         
         this.rowsA = rowsA;
         this.colsA = colsA;
         this.rowsB = rowsB;
         this.colsB = colsB;
         
-        this.Matrix1a = new int[Matrix1Concurrent.length][Matrix1Concurrent[0].length];
         this.Matrix2a = new int[rowsB][colsB];
-        
-        this.Matrix1a = Matrix1Concurrent;
         this.Matrix2a = Matrix2a;
+        
+        this.panelHilos = panelHilos;
         
         this.MatrizNueva = new int[Matrix1Concurrent.length][Matrix1Concurrent[0].length];
         
@@ -63,6 +66,14 @@ public final class Matrix implements Runnable{
     
     @Override
     public void run() {
+        
+        String texto = "Thread: " + Thread.currentThread().getName() + " en ejecucion\n";
+            
+        try {
+            process.printStatusOfThreads(panelHilos, texto);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         final long time1M = System.currentTimeMillis();
                 
@@ -84,7 +95,24 @@ public final class Matrix implements Runnable{
         process.joinArray(auxMatrix, startIndex, endIndex, auxMatrix[0].length);
         
         labelConcurrente.setText("Tiempo: " + Integer.toString((int) timeResult) + "ms");
-        //System.out.println("Thread: " + Thread.currentThread().getName() + ", FirstValue: " + Matrix1a[0][0] + ", FirstResult: " + auxMatrix[0][0]);
+        
+        //Se imprime el estado finalizado del hilo
+            
+        texto = "Thread: " + Thread.currentThread().getName() + ", tiempo: " + Integer.toString((int) timeResult) + "ms\n";
+        
+        try {
+            process.printStatusOfThreads(panelHilos, texto);
+            //System.out.println("Thread: " + Thread.currentThread().getName() + ", tiempo: " + timeResult);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            process.setFinalTimeConcurrent((int) timeResult);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
        
     }
 
@@ -104,5 +132,15 @@ public final class Matrix implements Runnable{
         return res;
         
     } 
+    
+//    public synchronized void printStatus(int estado, JTextArea panelHilos, String previous) {
+//         
+//        
+////        System.out.println("Thread: " + Thread.currentThread().getName() + ",   " + text);
+//        
+//        if(estado == -1) panelHilos.setText(previous + text);
+//        else panelHilos.setText(previous + text2);
+//        
+//    }
 
 }

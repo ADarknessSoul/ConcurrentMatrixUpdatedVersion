@@ -241,13 +241,13 @@ public class VisualArrays extends javax.swing.JFrame {
         txtAreaResultadoSecuencial.setEnabled(false);
         jScrollPane5.setViewportView(txtAreaResultadoSecuencial);
 
-        jPanel3.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 400, 210));
+        jPanel3.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 400, 330));
 
         lblTiempoEjecucionSecuencial.setText("Tiempo de ejecución:");
-        jPanel3.add(lblTiempoEjecucionSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 300, -1, -1));
+        jPanel3.add(lblTiempoEjecucionSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 420, -1, -1));
 
         lblResultadoTiempoSecuencial.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(lblResultadoTiempoSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 320, 110, 20));
+        jPanel3.add(lblResultadoTiempoSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 440, 110, 20));
 
         jPanel2.add(jPanel3);
 
@@ -266,23 +266,23 @@ public class VisualArrays extends javax.swing.JFrame {
         txtAreaResultadoConcurrente.setEnabled(false);
         jScrollPane6.setViewportView(txtAreaResultadoConcurrente);
 
-        jPanel4.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 410, 90));
+        jPanel4.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 410, 150));
 
         lblEstadoHilos.setText("Estado de los hilos:");
-        jPanel4.add(lblEstadoHilos, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, -1, -1));
+        jPanel4.add(lblEstadoHilos, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
 
         txtAreaEstadoHilos.setColumns(20);
         txtAreaEstadoHilos.setRows(5);
         txtAreaEstadoHilos.setEnabled(false);
         jScrollPane7.setViewportView(txtAreaEstadoHilos);
 
-        jPanel4.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, 410, 90));
+        jPanel4.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 410, 160));
 
         lblTiempoEjecucionConcurrente.setText("Tiempo de ejecución:");
-        jPanel4.add(lblTiempoEjecucionConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 300, -1, -1));
+        jPanel4.add(lblTiempoEjecucionConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 430, -1, -1));
 
         lblResultadoTiempoConcurrente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jPanel4.add(lblResultadoTiempoConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 320, 110, 20));
+        jPanel4.add(lblResultadoTiempoConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 450, 110, 20));
 
         jPanel2.add(jPanel4);
 
@@ -301,10 +301,11 @@ public class VisualArrays extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
        
+        this.txtAreaEstadoHilos.setText("");
         Initialize process = new Initialize(); 
-        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblTiempoEjecucionSecuencial);
+        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblResultadoTiempoSecuencial);
         try {
-            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblTiempoEjecucionConcurrente, numHilos);
+            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblResultadoTiempoConcurrente, numHilos, this.txtAreaEstadoHilos);
         } catch (InterruptedException ex) {
             Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -344,7 +345,7 @@ public class VisualArrays extends javax.swing.JFrame {
             matrixB = new int[rowsB][colsB];
             
             matrixA = mainM.initalizeArray(matrixA, rowsA, colsA);
-            matrixB = mainM.initalizeArray(matrixB, rowsA, colsA);
+            matrixB = mainM.initalizeArray(matrixB, rowsB, colsB);
             
             printArrays(this.txtAreaMatrizA, matrixA);
             printArrays(this.txtAreaMatrizB, matrixB);
@@ -401,7 +402,9 @@ public class VisualArrays extends javax.swing.JFrame {
         
         int length;
         
-        if(matriz.length >= 50) length = 50;
+        if(matriz.length >= 2000) length = 5;
+        else if(matriz.length >= 1000) length = 10;
+        else if(matriz.length >= 50) length = 50;
         else length = matriz.length;
         
         panel.setText("");

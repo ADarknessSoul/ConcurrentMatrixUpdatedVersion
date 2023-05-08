@@ -18,6 +18,9 @@ public class Initialize {
     int[][] MatrizConcurrente;
     int[][] Matriz;
     Thread[] threads;
+    static boolean flag = true;
+    static boolean flagTime = true;
+    static int resultantTime = 0;
       
     public int[][] initalizeArray(int[][] Matrix, int rows, int cols) {
 
@@ -57,7 +60,7 @@ public class Initialize {
         
     }
     
-    public void initializeConcurrentProcess(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizA, int[][] MatrizB, JTextArea panel, JLabel labelConcurrente, int batchSize) throws InterruptedException {
+    public void initializeConcurrentProcess(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizA, int[][] MatrizB, JTextArea panel, JLabel labelConcurrente, int batchSize, JTextArea panelHilos) throws InterruptedException {
         
         //Se inicializa la matriz
         
@@ -70,7 +73,7 @@ public class Initialize {
         
         //Se inicia el reparto de hilos
         
-        initializeThreads(rowsA, colsA, rowsB, colsB, batchSize, MatrizA, MatrizB, panel, labelConcurrente, this);
+        initializeThreads(rowsA, colsA, rowsB, colsB, batchSize, MatrizA, MatrizB, panel, labelConcurrente, this, panelHilos);
         
         //Se espera a que terminen su proceso todos los hilos
         
@@ -83,6 +86,7 @@ public class Initialize {
         //Se imprimen los valores del array
         
         printArrays(Matriz, panel);
+        labelConcurrente.setText(Integer.toString(resultantTime) + "ms"); 
         
     }
     
@@ -90,7 +94,9 @@ public class Initialize {
         
         int length;
         
-        if(matriz.length >= 50) length = 50;
+        if(matriz.length >= 2000) length = 5;
+        else if(matriz.length >= 1000) length = 10;
+        else if(matriz.length >= 50) length = 50;
         else length = matriz.length;
         
         panel.setText("");
@@ -112,7 +118,7 @@ public class Initialize {
       
     }
         
-        public void initializeThreads(int rowsA, int colsA, int rowsB, int colsB, int batchSize, int[][] Matrix1, int[][] Matrix2, JTextArea panel, JLabel labelConcurrente, Initialize process) {
+        public void initializeThreads(int rowsA, int colsA, int rowsB, int colsB, int batchSize, int[][] Matrix1, int[][] Matrix2, JTextArea panel, JLabel labelConcurrente, Initialize process, JTextArea panelHilos) {
             int numBatches = rowsA / batchSize;
             int remainingRows = rowsA % batchSize;
             int startIndex = 0, endIndex = 0;
@@ -132,7 +138,7 @@ public class Initialize {
                     startIndex = i;
                     endIndex = startIndex;
                     
-                    Matrix runnable = new Matrix(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, labelConcurrente, process);
+                    Matrix runnable = new Matrix(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, labelConcurrente, process, panelHilos);
                     Thread thread = new Thread(runnable);
                     threads[i] = thread;
                     thread.start();
@@ -168,7 +174,7 @@ public class Initialize {
                         }
                         
                     flag = true;
-                    Matrix runnable = new Matrix(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, labelConcurrente, process);
+                    Matrix runnable = new Matrix(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, labelConcurrente, process, panelHilos);
                     Thread thread = new Thread(runnable);
                     threads[i] = thread;
                     thread.start();
@@ -236,7 +242,7 @@ public class Initialize {
                     }
                     
                     flag = true;    
-                    Matrix runnable = new Matrix(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, labelConcurrente, process);
+                    Matrix runnable = new Matrix(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, labelConcurrente, process, panelHilos);
                     Thread thread = new Thread(runnable);
                     threads[i] = thread;
                     thread.start();
@@ -272,5 +278,39 @@ public class Initialize {
             }
             
         } 
+        
+        public synchronized void printStatusOfThreads(JTextArea panelHilos, String texto) throws InterruptedException {
+            
+            if(flag == false) wait();
+            
+            flag = false;
+            
+            String textoPrevio = panelHilos.getText();
+            if(texto.contains("tiempo")) panelHilos.setText(textoPrevio + "                                                                  " + texto);
+            else panelHilos.setText(textoPrevio + texto);
+            
+            flag = true;
+            
+            notifyAll();
+            
+        }
+        
+        public synchronized void setFinalTimeConcurrent(int time) throws InterruptedException {
+            
+            if(flagTime == false) wait();
+            
+            flagTime = false;
+            
+            if(time > resultantTime) {
+                
+                resultantTime = time;
+                
+            }
+            
+            flagTime = true;
+            
+            notifyAll();
+            
+        }
     
 }
