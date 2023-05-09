@@ -87,6 +87,7 @@ public class Initialize {
         
         printArrays(Matriz, panel);
         labelConcurrente.setText(Integer.toString(resultantTime) + "ms"); 
+        resultantTime = 0;
         
     }
     

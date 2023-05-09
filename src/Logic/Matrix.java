@@ -87,18 +87,18 @@ public final class Matrix implements Runnable{
             }                       
                         
         }
-               
-        final long time2M = System.currentTimeMillis();
 
-        final long timeResult = time2M - time1M;
-        
         process.joinArray(auxMatrix, startIndex, endIndex, auxMatrix[0].length);
         
-        labelConcurrente.setText("Tiempo: " + Integer.toString((int) timeResult) + "ms");
+        final long time2M = System.currentTimeMillis();
         
+        final long timeResult = time2M - time1M;   
+               
         //Se imprime el estado finalizado del hilo
             
         texto = "Thread: " + Thread.currentThread().getName() + ", tiempo: " + Integer.toString((int) timeResult) + "ms\n";
+        
+        System.out.println(texto);
         
         try {
             process.printStatusOfThreads(panelHilos, texto);

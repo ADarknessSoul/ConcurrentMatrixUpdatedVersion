@@ -302,6 +302,7 @@ public class VisualArrays extends javax.swing.JFrame {
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
        
         this.txtAreaEstadoHilos.setText("");
+        this.lblResultadoTiempoConcurrente.setText("");
         Initialize process = new Initialize(); 
         process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblResultadoTiempoSecuencial);
         try {
