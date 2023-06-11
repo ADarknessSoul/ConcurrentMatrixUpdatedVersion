@@ -3,6 +3,10 @@ package visual;
 import java.awt.Color;
 import Logic.Initialize;
 import Logic.Initialize;
+import RMI.MiInterfazRemota;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
@@ -20,10 +24,13 @@ public class VisualArrays extends javax.swing.JFrame {
     int colsA;
     int rowsB;
     int colsB;
+    public  Registry registry;
+    public  MiInterfazRemota remoteMi;
     
     public VisualArrays() {
         initComponents();
         numHilos = this.sliderHilos.getValue();
+        RegisterCliente(); 
     }
 
     /**
@@ -301,15 +308,21 @@ public class VisualArrays extends javax.swing.JFrame {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
        
-        this.txtAreaEstadoHilos.setText("");
-        this.lblResultadoTiempoConcurrente.setText("");
-        Initialize process = new Initialize(); 
-        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblResultadoTiempoSecuencial);
+//        this.txtAreaEstadoHilos.setText("");
+//        this.lblResultadoTiempoConcurrente.setText("");
+//        Initialize process = new Initialize(); 
+//        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblResultadoTiempoSecuencial);
+//        try {
+//            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblResultadoTiempoConcurrente, numHilos, this.txtAreaEstadoHilos);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         try {
-            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblResultadoTiempoConcurrente, numHilos, this.txtAreaEstadoHilos);
-        } catch (InterruptedException ex) {
+            remoteMi.MatrixFor(rowsA, colsA, rowsB, colsB, matrixA, matrixB, numHilos);
+        } catch (RemoteException ex) {
             Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     private void btnCrearMatricesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearMatricesActionPerformed
@@ -429,6 +442,25 @@ public class VisualArrays extends javax.swing.JFrame {
             
         }
         
+    }
+    
+    public void RegisterCliente() {
+        try {
+            
+            // Registry registry = LocateRegistry.getRegistry("192.168.84.200", 1099);
+            //remoteMiaux = (MiInterfazRemota) Naming.lookup("rmi://192.168.100.5:1099/MiInterfazRemota");
+
+            registry = LocateRegistry.getRegistry("192.168.1.80", 1099);
+            remoteMi = (MiInterfazRemota) registry.lookup("MiInterfazRemota");
+            remoteMi.registerClient(remoteMi);
+            
+            // System.out.println(remoteMiaux);
+            System.out.println("Conexion exitosa");
+            
+        } catch (Exception e) {
+            System.err.println("Error send the message: " + e.toString());
+        }
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
