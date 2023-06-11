@@ -49,8 +49,9 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
     public void MatrixFor(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizA, int[][] MatrizB, int batchSize) throws RemoteException {
         
         //Matriz = new int[rowsA][colsB];
+        System.out.println("Clientes: " + clients.size());
         int numClients = clients.size(); 
-//        int numClients = 1;
+//        int numClients = 2;
         int[][] newMatrix;
         if(rowsA <= batchSize) threads = new Thread[rowsA];
         else threads = new Thread[batchSize];
@@ -70,7 +71,7 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
                 
                 MiInterfazRemota client = clients.get(i);
                 client.initializeThreads(newMatrix.length, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i);
-                
+//                
             }
             
         } else {
@@ -82,9 +83,10 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
             
             for(int i = 0; i < numClients; i++) {
 
-                MiInterfazRemota client = clients.get(i);
+                
+                MiInterfazRemota client = clients.get(0);
                 newMatrix = separateArray(MatrizA, numClients, i, rowsA, colsA);
-                client.initializeThreads(rowsA, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i);
+                client.initializeThreads(newMatrix.length, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i);
 
             }
             
