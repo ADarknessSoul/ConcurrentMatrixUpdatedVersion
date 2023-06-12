@@ -310,13 +310,13 @@ public class VisualArrays extends javax.swing.JFrame {
        
 //        this.txtAreaEstadoHilos.setText("");
 //        this.lblResultadoTiempoConcurrente.setText("");
-//        Initialize process = new Initialize(); 
-//        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblResultadoTiempoSecuencial);
-//        try {
-//            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblResultadoTiempoConcurrente, numHilos, this.txtAreaEstadoHilos);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        Initialize process = new Initialize(); 
+        process.initializeProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoSecuencial,  this.lblResultadoTiempoSecuencial);
+        try {
+            process.initializeConcurrentProcess(rowsA, colsA, rowsB, colsB, matrixA, matrixB, this.txtAreaResultadoConcurrente, this.lblResultadoTiempoConcurrente, numHilos, this.txtAreaEstadoHilos);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             remoteMi.MatrixFor(rowsA, colsA, rowsB, colsB, matrixA, matrixB, numHilos);
         } catch (RemoteException ex) {

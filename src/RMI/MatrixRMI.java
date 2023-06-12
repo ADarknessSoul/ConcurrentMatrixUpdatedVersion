@@ -19,7 +19,7 @@ public final class MatrixRMI implements Runnable{
 
     int[][] Matrix1a;
     int[][] Matrix2a;
-    int[][] auxMatrix;
+    public int[][] auxMatrix;
     
     int[][] MatrizNueva;
     int rowsA;
@@ -29,11 +29,11 @@ public final class MatrixRMI implements Runnable{
     int startIndex;
     int endIndex;
     int actualClient;
-    JLabel labelConcurrente;
-    JTextArea panelHilos;
+    int threadNumber;
+    int clientStartIndex;
     MiClaseRemota process;
     
-    public MatrixRMI(int rowsA, int colsA, int rowsB, int colsB, int[][] Matrix1Concurrent, int[][] Matrix2a, int startIndex, int endIndex, int actualClient) {
+    public MatrixRMI(int rowsA, int colsA, int rowsB, int colsB, int[][] Matrix1Concurrent, int[][] Matrix2a, int startIndex, int endIndex, int actualClient, MiClaseRemota process, int threadNumber, int clientStartIndex) {
    
         this.rowsA = rowsA;
         this.colsA = colsA;
@@ -55,11 +55,13 @@ public final class MatrixRMI implements Runnable{
             
         }
         
-        this.auxMatrix = new int[rowsA][colsB];
+        this.auxMatrix = new int[MatrizNueva.length][colsB];
         this.startIndex = startIndex;
+        this.clientStartIndex = clientStartIndex;
         this.endIndex = endIndex;
         this.actualClient = actualClient;
-        //this.process = process;
+        this.process = process;
+        this.threadNumber = threadNumber;
         
     }
     
@@ -81,14 +83,19 @@ public final class MatrixRMI implements Runnable{
             for(int j = 0; j < colsB; j++) {
                         
                 auxMatrix[i][j] = multiplyMatrix(i, j);
+                
 //                       
                         
             }                       
                         
         }
+        
+        //if("Thread-0".equals(Thread.currentThread().getName())) System.out.println("Rows: " + rowsA + ", cols: " + colsA + ", auxMatrix length" + auxMatrix.length + ", Matriz nueva length: " + MatrizNueva.length);
 
 //        process.joinArray(auxMatrix, startIndex, endIndex, auxMatrix[0].length);
         
+        process.joinArray(auxMatrix, startIndex , endIndex , clientStartIndex, actualClient, threadNumber, auxMatrix[0].length);
+
         final long time2M = System.currentTimeMillis();
         
         final long timeResult = time2M - time1M;   
@@ -97,7 +104,9 @@ public final class MatrixRMI implements Runnable{
             
         texto = "Thread: " + Thread.currentThread().getName() + ", tiempo: " + Integer.toString((int) timeResult) + "ms\n" + ", desde el cliente: " + actualClient;
         
-        System.out.println(texto);
+        //System.out.println(texto);
+        
+        
         
 //        try {
 //            process.printStatusOfThreads(panelHilos, texto);
@@ -131,6 +140,12 @@ public final class MatrixRMI implements Runnable{
         return res;
         
     } 
+    
+    public int[][] getAuxMatrix() {
+        
+        return this.auxMatrix;
+        
+    }
     
 //    public synchronized void printStatus(int estado, JTextArea panelHilos, String previous) {
 //         

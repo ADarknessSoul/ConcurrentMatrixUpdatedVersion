@@ -29,9 +29,16 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
     public List <Long> tiempos;
     int[][] Matriz;
     Thread[] threads;
+    int threadNames = 0;
     int clientRemainingRows;
     int auxRemainingRows;
     boolean isOdd = false;
+    MiClaseRemota RMI_this = this;
+    int rows;
+    int cols;
+    int numHilos;
+    int numClientes;
+    int clientStartIndex;
     
 
     public MiClaseRemota() throws RemoteException {
@@ -48,13 +55,31 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
 
     public void MatrixFor(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizA, int[][] MatrizB, int batchSize) throws RemoteException {
         
-        //Matriz = new int[rowsA][colsB];
-        System.out.println("Clientes: " + clients.size());
+        Matriz = new int[rowsA][colsB];
+        this.rows = rowsA;
+        this.cols = colsB;
+
+        //System.out.println("Clientes: " + clients.size());
         int numClients = clients.size(); 
 //        int numClients = 2;
+        this.numClientes = numClients;
         int[][] newMatrix;
-        if(rowsA <= batchSize) threads = new Thread[rowsA];
-        else threads = new Thread[batchSize];
+        
+        if((rowsA / numClients) <= batchSize && rowsA % numClients == 0) {
+            threads = new Thread[rowsA/numClients];
+            this.numHilos = threads.length;
+        }
+        else if((rowsA / numClients) <= batchSize && rowsA % numClients != 0) {
+            
+            threads = new Thread[(rowsA/numClients) + rowsA % numClients];
+            this.numHilos = threads.length;
+        }
+        else  {
+            threads = new Thread[batchSize];
+            this.numHilos = threads.length;
+        }
+        
+        System.out.println("Número de hilos: " + threads.length);
         
         if(rowsA < numClients) {
 
@@ -67,15 +92,18 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
                     newMatrix[i][j] = MatrizA[i][j];
                     
                     
-                }
-                
-                MiInterfazRemota client = clients.get(i);
-                client.initializeThreads(newMatrix.length, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i);
+                }  
 //                
+            }
+            
+            for(int i = 0; i < numClients; i++) {
+                MiInterfazRemota client = clients.get(0);
+                client.initializeThreads(newMatrix.length, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i, clientStartIndex);
             }
             
         } else {
             
+            //Comprobaciones previas a separar la matriz para saber si es par o impar
             clientRemainingRows = rowsA % numClients;
             auxRemainingRows = clientRemainingRows;
             if(clientRemainingRows > 0) isOdd = true;
@@ -86,15 +114,35 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
                 
                 MiInterfazRemota client = clients.get(0);
                 newMatrix = separateArray(MatrizA, numClients, i, rowsA, colsA);
-                client.initializeThreads(newMatrix.length, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i);
+                client.initializeThreads(newMatrix.length, colsA, rowsB, colsB, batchSize, newMatrix, MatrizB, i, clientStartIndex);
 
             }
             
         }
-
+        
+        for(int i = 0; i < threads.length; i++) {
+            
+            try {
+                threads[i].join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MiClaseRemota.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }   
+        
+        for(int i = 0; i < Matriz.length; i++) {
+            
+            for(int j = 0; j < Matriz[0].length; j++) {
+                
+                System.out.println("Valor de la matriz final: " + Matriz[i][j] + ", posicion en i: " + i + ", posicion en j: " + j);
+                
+            }
+            
+        }
+        
     }
     
-    public void initializeThreads(int rowsA, int colsA, int rowsB, int colsB, int batchSize, int[][] Matrix1, int[][] Matrix2, int actualClient) {
+    public void initializeThreads(int rowsA, int colsA, int rowsB, int colsB, int batchSize, int[][] Matrix1, int[][] Matrix2, int actualClient, int clientStartIndex) {
             int numBatches = rowsA / batchSize;
             int remainingRows = rowsA % batchSize;
             int startIndex = 0, endIndex = 0;
@@ -114,8 +162,9 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
                     startIndex = i;
                     endIndex = startIndex;
                     
-                    MatrixRMI runnable = new MatrixRMI(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, actualClient);
-                    Thread thread = new Thread(runnable);
+                    MatrixRMI runnable = new MatrixRMI(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, actualClient, RMI_this, i, clientStartIndex);
+                    Thread thread = new Thread(runnable, Integer.toString(threadNames));
+                    threadNames++;
                     threads[i] = thread;
                     thread.start();
                     
@@ -150,8 +199,9 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
                         }
                         
                     flag = true;
-                    MatrixRMI runnable = new MatrixRMI(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, actualClient);
-                    Thread thread = new Thread(runnable);
+                    MatrixRMI runnable = new MatrixRMI(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, actualClient, RMI_this, i, clientStartIndex);
+                    Thread thread = new Thread(runnable, Integer.toString(threadNames));
+                    threadNames++;
                     threads[i] = thread;
                     thread.start();
                          
@@ -218,8 +268,9 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
                     }
                     
                     flag = true;    
-                    MatrixRMI runnable = new MatrixRMI(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, actualClient);
-                    Thread thread = new Thread(runnable);
+                    MatrixRMI runnable = new MatrixRMI(rowsA, colsA, rowsB, colsB, batch, Matrix2, startIndex, endIndex, actualClient, RMI_this, i, clientStartIndex);
+                    Thread thread = new Thread(runnable, Integer.toString(threadNames));
+                    threadNames++;
                     threads[i] = thread;
                     thread.start();
                     j = 0;
@@ -239,6 +290,8 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
         int[][] auxMatrix = new int[blockSize][colsA];
         
         int startIndex = (blockSize * position);
+        System.out.println("StartIndex par: " + startIndex);
+        clientStartIndex = startIndex;
         int endIndex = startIndex + (blockSize - 1);
         
         if(clientRemainingRows == 0 && !isOdd) {
@@ -264,6 +317,12 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
             //Se agrega una fila extra a cada blockSize por cada fila faltante en cada iteración
 
             
+//        while(clientRemainingRows > 0) {
+//            
+//            
+//            
+//        }
+            
             if(clientRemainingRows > 0) {
                 
                 startIndex = (blockSize + 1) * position;
@@ -279,7 +338,7 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
             }
 
 
-            
+            clientStartIndex = startIndex;
             for(int i = 0; startIndex <= endIndex; i++) {
 
                 for(int j = 0; j < colsA; j++) {
@@ -299,6 +358,31 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
         return auxMatrix;
         
     }
+    
+    public void joinArray(int[][] auxMatrix, int RMI_startIndex, int RMI_endIndex, int RMI_clientStartIndex, int RMI_actualClient, int threadNumber, int columns) {
+
+            
+            //System.out.println("nombre del hilo: " + threadName);
+        //System.out.println("Client start Index: " + RMI_clientStartIndex + ", Actual client: " + RMI_actualClient + ", threadName: " + threadNumber + ", startIndex: " + RMI_startIndex + ", endIndex: " + RMI_endIndex);
+
+        RMI_startIndex += RMI_clientStartIndex;
+        RMI_endIndex += RMI_clientStartIndex;
+        
+        for(int i = 0; RMI_startIndex <= RMI_endIndex; RMI_startIndex++) {
+                
+                
+                for(int j = 0; j < columns; j++) {
+                    
+                    this.Matriz[RMI_startIndex][j] = auxMatrix[i][j];
+//                    System.out.println("AuxMatrix: " + auxMatrix[i][j]);
+                    
+                }
+                
+                i++;
+                
+        }
+            
+        } 
     
 
     @Override
