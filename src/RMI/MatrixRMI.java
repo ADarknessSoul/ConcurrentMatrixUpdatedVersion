@@ -104,6 +104,13 @@ public final class MatrixRMI implements Runnable{
             
         texto = "Thread: " + Thread.currentThread().getName() + ", tiempo: " + Integer.toString((int) timeResult) + "ms\n" + ", desde el cliente: " + actualClient;
         
+        
+        try {
+            process.setFinalTimeRMI((int) timeResult);
+        } catch (InterruptedException ex) {
+            System.out.println(ex);
+        }
+        
         //System.out.println(texto);
         
         
