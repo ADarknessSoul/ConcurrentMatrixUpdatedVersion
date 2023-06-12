@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 /**
@@ -35,7 +36,7 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
     boolean isOdd = false;
     MiClaseRemota RMI_this = this;
     static boolean flagTime = true;
-    static int resultantTime = 0;
+    int resultantTime = 0;
     int rows;
     int cols;
     int numHilos;
@@ -55,7 +56,7 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
         System.out.println(client);
     }
 
-    public void MatrixFor(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizA, int[][] MatrizB, int batchSize) throws RemoteException {
+    public int[][] MatrixFor(int rowsA, int colsA, int rowsB, int colsB, int[][] MatrizA, int[][] MatrizB, int batchSize) throws RemoteException {
         
         Matriz = new int[rowsA][colsB];
         this.rows = rowsA;
@@ -141,6 +142,7 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
 //        }
 
         System.out.println("Tiempo RMI: " + resultantTime);
+        return this.Matriz;
         
     }
     
@@ -386,7 +388,7 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
             
         } 
     
-            public synchronized void setFinalTimeRMI(int time) throws InterruptedException {
+        public synchronized void setFinalTimeRMI(int time) throws InterruptedException {
             
             if(flagTime == false) wait();
             
@@ -402,16 +404,18 @@ public class MiClaseRemota extends UnicastRemoteObject implements MiInterfazRemo
             
             notifyAll();
             
-            }
-
-    @Override
-    public Long TIemEnd() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void multiSeccion(int[][] blockA, int[][] blockB, int startRow, int startCol, int endRow, int endCol) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+        }
+        
+        public int getTiempoFinal() {
+            
+            return this.resultantTime;
+            
+        }
+        
+        public int getClientes() {
+            
+            return this.clients.size();
+            
+        }
      
 }

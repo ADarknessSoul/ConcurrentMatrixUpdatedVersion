@@ -64,6 +64,8 @@ public class Initialize {
         
         //Se inicializa la matriz
         
+        panelHilos.setText("");
+        
         Matriz = new int[rowsA][colsB];
         
         //Se hace la inicialización del array de threads

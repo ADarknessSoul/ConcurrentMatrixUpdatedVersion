@@ -19,13 +19,14 @@ public class VisualArrays extends javax.swing.JFrame {
 
     int[][] matrixA;
     int[][] matrixB;
+    int[][] resultantMatrix;
     int numHilos;
     int rowsA;
     int colsA;
     int rowsB;
     int colsB;
-    public  Registry registry;
-    public  MiInterfazRemota remoteMi;
+    public Registry registry;
+    public MiInterfazRemota remoteMi;
     
     public VisualArrays() {
         initComponents();
@@ -75,24 +76,32 @@ public class VisualArrays extends javax.swing.JFrame {
         lblMostrarNumHilos = new javax.swing.JLabel();
         btnIniciar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
         lblSecuencial = new javax.swing.JLabel();
         lblResultadoSecuencial = new javax.swing.JLabel();
+        lblTiempoEjecucionSecuencial = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         txtAreaResultadoSecuencial = new javax.swing.JTextArea();
-        lblTiempoEjecucionSecuencial = new javax.swing.JLabel();
         lblResultadoTiempoSecuencial = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         lblConcurrente = new javax.swing.JLabel();
         lblResultadoConcurrente = new javax.swing.JLabel();
+        lblEstadoHilos = new javax.swing.JLabel();
+        lblTiempoEjecucionConcurrente = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         txtAreaResultadoConcurrente = new javax.swing.JTextArea();
-        lblEstadoHilos = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         txtAreaEstadoHilos = new javax.swing.JTextArea();
-        lblTiempoEjecucionConcurrente = new javax.swing.JLabel();
         lblResultadoTiempoConcurrente = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        lblRMI = new javax.swing.JLabel();
+        lblResultadoRMI = new javax.swing.JLabel();
+        lblNumeroClientes = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtAreaResultadoRMI = new javax.swing.JTextArea();
+        lblTiempoEjecucionRMI = new javax.swing.JLabel();
+        lblResultadoTiempoRMI = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -232,66 +241,97 @@ public class VisualArrays extends javax.swing.JFrame {
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, -50, -1, 20));
+        jPanel1.setLayout(new java.awt.GridLayout());
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblSecuencial.setText("Secuencial:");
-        jPanel3.add(lblSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 10, -1, -1));
+        jPanel5.add(lblSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, -1, -1));
 
         lblResultadoSecuencial.setText("Resultado:");
-        jPanel3.add(lblResultadoSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
+        jPanel5.add(lblResultadoSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
+
+        lblTiempoEjecucionSecuencial.setText("Tiempo de ejecución:");
+        jPanel5.add(lblTiempoEjecucionSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 380, -1, 20));
 
         txtAreaResultadoSecuencial.setColumns(20);
         txtAreaResultadoSecuencial.setRows(5);
         txtAreaResultadoSecuencial.setEnabled(false);
         jScrollPane5.setViewportView(txtAreaResultadoSecuencial);
 
-        jPanel3.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 400, 330));
-
-        lblTiempoEjecucionSecuencial.setText("Tiempo de ejecución:");
-        jPanel3.add(lblTiempoEjecucionSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 420, -1, -1));
+        jPanel5.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 270, 310));
 
         lblResultadoTiempoSecuencial.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(lblResultadoTiempoSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 440, 110, 20));
+        jPanel5.add(lblResultadoTiempoSecuencial, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 400, 110, 20));
 
-        jPanel2.add(jPanel3);
+        jPanel1.add(jPanel5);
 
-        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblConcurrente.setText("Concurrente:");
-        jPanel4.add(lblConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 10, -1, -1));
+        jPanel6.add(lblConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, -1, -1));
 
         lblResultadoConcurrente.setText("Resultado:");
-        jPanel4.add(lblResultadoConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, -1, -1));
+        jPanel6.add(lblResultadoConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
+
+        lblEstadoHilos.setText("Estado de los hilos:");
+        jPanel6.add(lblEstadoHilos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
+
+        lblTiempoEjecucionConcurrente.setText("Tiempo de ejecución:");
+        jPanel6.add(lblTiempoEjecucionConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 380, -1, -1));
 
         txtAreaResultadoConcurrente.setColumns(20);
         txtAreaResultadoConcurrente.setRows(5);
         txtAreaResultadoConcurrente.setEnabled(false);
         jScrollPane6.setViewportView(txtAreaResultadoConcurrente);
 
-        jPanel4.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 410, 150));
-
-        lblEstadoHilos.setText("Estado de los hilos:");
-        jPanel4.add(lblEstadoHilos, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
+        jPanel6.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 280, 130));
 
         txtAreaEstadoHilos.setColumns(20);
         txtAreaEstadoHilos.setRows(5);
         txtAreaEstadoHilos.setEnabled(false);
         jScrollPane7.setViewportView(txtAreaEstadoHilos);
 
-        jPanel4.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 410, 160));
-
-        lblTiempoEjecucionConcurrente.setText("Tiempo de ejecución:");
-        jPanel4.add(lblTiempoEjecucionConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 430, -1, -1));
+        jPanel6.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 280, 150));
 
         lblResultadoTiempoConcurrente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jPanel4.add(lblResultadoTiempoConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 450, 110, 20));
+        jPanel6.add(lblResultadoTiempoConcurrente, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 400, 120, 20));
 
-        jPanel2.add(jPanel4);
+        jPanel1.add(jPanel6);
+
+        jPanel7.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblRMI.setText("RMI:");
+        jPanel7.add(lblRMI, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, -1, -1));
+
+        lblResultadoRMI.setText("Resultado:");
+        jPanel7.add(lblResultadoRMI, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, -1, -1));
+
+        lblNumeroClientes.setText("Número de clientes:");
+        jPanel7.add(lblNumeroClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, -1, -1));
+
+        txtAreaResultadoRMI.setColumns(20);
+        txtAreaResultadoRMI.setRows(5);
+        txtAreaResultadoRMI.setEnabled(false);
+        jScrollPane1.setViewportView(txtAreaResultadoRMI);
+
+        jPanel7.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 270, 290));
+
+        lblTiempoEjecucionRMI.setText("Tiempo de ejecución:");
+        jPanel7.add(lblTiempoEjecucionRMI, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 380, -1, -1));
+
+        lblResultadoTiempoRMI.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPanel7.add(lblResultadoTiempoRMI, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 400, 110, 20));
+
+        jPanel1.add(jPanel7);
+
+        jPanel2.add(jPanel1);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -318,7 +358,23 @@ public class VisualArrays extends javax.swing.JFrame {
             Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            remoteMi.MatrixFor(rowsA, colsA, rowsB, colsB, matrixA, matrixB, numHilos);
+            this.resultantMatrix = remoteMi.MatrixFor(rowsA, colsA, rowsB, colsB, matrixA, matrixB, numHilos);
+            printArrays();
+            System.out.println("Length matriz: " + resultantMatrix.length);
+        } catch (RemoteException ex) {
+            Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            String textNumClients = "Número de clientes: " + remoteMi.getClientes();
+            lblNumeroClientes.setText(textNumClients);
+        } catch (RemoteException ex) {
+            Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            int tiempoFinalRMI = remoteMi.getTiempoFinal();
+            lblResultadoTiempoRMI.setText(Integer.toString(tiempoFinalRMI) + "ms");
         } catch (RemoteException ex) {
             Logger.getLogger(VisualArrays.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -462,13 +518,43 @@ public class VisualArrays extends javax.swing.JFrame {
         }
 
     }
+    
+           public void printArrays() {
+
+            int length;
+
+            if(resultantMatrix.length >= 2000) length = 5;
+            else if(resultantMatrix.length >= 1000) length = 10;
+            else if(resultantMatrix.length >= 50) length = 50;
+            else length = resultantMatrix.length;
+
+            txtAreaResultadoRMI.setText("");
+
+            for (int i = 0; i < length; i++) {
+
+                for (int j = 0; j < resultantMatrix[i].length; j++) {
+
+                    //Se escribe el valor actual de la matriz en el txtArea, dependiendo de su número de digitos se le da más espacios
+                    String textInPanel = txtAreaResultadoRMI.getText();
+                    txtAreaResultadoRMI.setText(textInPanel + Integer.toString(resultantMatrix[i][j]) + " ");
+
+                }
+
+                String textInPanel = txtAreaResultadoRMI.getText();
+                txtAreaResultadoRMI.setText(textInPanel + "\n");
+
+            }
+
+        }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCrearMatrices;
     private javax.swing.JButton btnIniciar;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanelMultiplicacionMatrices;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane5;
@@ -494,13 +580,18 @@ public class VisualArrays extends javax.swing.JFrame {
     private javax.swing.JLabel lblMostrarNumHilos;
     private javax.swing.JLabel lblMultiplicacionMatrices;
     private javax.swing.JLabel lblNota;
+    private javax.swing.JLabel lblNumeroClientes;
     private javax.swing.JLabel lblNumerodeHilos;
+    private javax.swing.JLabel lblRMI;
     private javax.swing.JLabel lblResultadoConcurrente;
+    private javax.swing.JLabel lblResultadoRMI;
     private javax.swing.JLabel lblResultadoSecuencial;
     private javax.swing.JLabel lblResultadoTiempoConcurrente;
+    private javax.swing.JLabel lblResultadoTiempoRMI;
     private javax.swing.JLabel lblResultadoTiempoSecuencial;
     private javax.swing.JLabel lblSecuencial;
     private javax.swing.JLabel lblTiempoEjecucionConcurrente;
+    private javax.swing.JLabel lblTiempoEjecucionRMI;
     private javax.swing.JLabel lblTiempoEjecucionSecuencial;
     private javax.swing.JScrollPane scrollPaneNota;
     private javax.swing.JScrollPane scrollPanelMatrizA;
@@ -510,6 +601,7 @@ public class VisualArrays extends javax.swing.JFrame {
     private javax.swing.JTextArea txtAreaMatrizA;
     private javax.swing.JTextArea txtAreaMatrizB;
     private javax.swing.JTextArea txtAreaResultadoConcurrente;
+    private javax.swing.JTextArea txtAreaResultadoRMI;
     private javax.swing.JTextArea txtAreaResultadoSecuencial;
     private javax.swing.JTextField txtColumnasA;
     private javax.swing.JTextField txtColumnasB;
